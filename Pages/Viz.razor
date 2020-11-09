@@ -1,0 +1,91 @@
+﻿@page "/viz"
+@inject IJSRuntime JS
+@inject Vega_LiteBlazor.Data.VegaDataService VegaData
+@using Newtonsoft.Json
+
+
+<h1>Template for Embedding Vega-Lite Visualization</h1>
+<!-- Container for the visualization -->
+<div id="vis">@embededText</div>
+<div>
+    <button type="button" class="btn btn-primary" @onclick="ConvertArray">
+        Convert Array
+    </button>
+    <button type="button" class="btn btn-primary" @onclick="EmbedViz">
+        Embed Vizualization
+    </button>
+</div>
+@if (vegaData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h2>The data that was injected into the chart</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>A</th>
+                <th>B</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in vegaData) { 
+            <tr>
+                <td>@item.a</td>
+                <td>@item.b</td>
+            </tr>
+            }            
+        </tbody>
+    </table>
+    
+}
+<p class="mt-2" style="font-size:1.6em">
+    <span class="badge badge-success">
+        @convertedText
+    </span>
+</p>
+
+
+@code {
+    // Quote (c)2005 Universal Pictures: Serenity
+    // https://www.uphe.com/movies/serenity
+    // David Krumholtz on IMDB: https://www.imdb.com/name/nm0472710/
+
+    private MarkupString convertedText =
+        new MarkupString("Select the <b>Convert Array</b> button.");
+    private MarkupString embededText =
+        new MarkupString("viz goes here");
+
+    private Vega_LiteBlazor.Data.VegaData[] vegaData;
+
+    
+
+    private uint[] quoteArray = new uint[]
+    {
+            60, 101, 109, 62, 67, 97, 110, 39, 116, 32, 115, 116, 111, 112, 32,
+            116, 104, 101, 32, 115, 105, 103, 110, 97, 108, 44, 32, 77, 97,
+            108, 46, 60, 47, 101, 109, 62, 32, 45, 32, 77, 114, 46, 32, 85, 110,
+            105, 118, 101, 114, 115, 101, 10, 10,
+                                };
+
+    private async Task ConvertArray()
+    {
+        var text =
+            await JS.InvokeAsync<string>("convertArray", quoteArray);
+
+        convertedText = new MarkupString(text);
+    }
+    private async Task EmbedViz()
+    {
+        var text = await JS.InvokeAsync<string>("displayvega", Newtonsoft.Json.JsonConvert.SerializeObject( vegaData));
+        embededText = new MarkupString(text);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var vg = new Vega_LiteBlazor.Data.VegaDataService();
+        vegaData = await vg.GetVegaData();
+        
+    }
+}
+
