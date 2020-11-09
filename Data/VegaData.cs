@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+﻿/*
+ * POCO for chart coordinates
+ */
 namespace Vega_LiteBlazor.Data
 {
     public class VegaData

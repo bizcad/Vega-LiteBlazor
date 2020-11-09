@@ -27,7 +27,7 @@ namespace Vega_LiteBlazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<WeatherForecastService>();            
             services.AddSingleton<VegaDataService>();
         }
 

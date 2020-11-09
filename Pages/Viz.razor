@@ -5,8 +5,7 @@
 
 
 <h1>Template for Embedding Vega-Lite Visualization</h1>
-<!-- Container for the visualization -->
-<div id="vis">@embededText</div>
+
 <div>
     <button type="button" class="btn btn-primary" @onclick="ConvertArray">
         Convert Array
@@ -15,6 +14,7 @@
         Embed Vizualization
     </button>
 </div>
+
 @if (vegaData == null)
 {
     <p><em>Loading...</em></p>
@@ -30,16 +30,19 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in vegaData) { 
-            <tr>
-                <td>@item.a</td>
-                <td>@item.b</td>
-            </tr>
-            }            
+            @foreach (var item in vegaData)
+            {
+                <tr>
+                    <td>@item.a</td>
+                    <td>@item.b</td>
+                </tr>
+            }
         </tbody>
     </table>
-    
 }
+<!-- Container for the visualization -->
+<div id="vis">@embededText</div>
+
 <p class="mt-2" style="font-size:1.6em">
     <span class="badge badge-success">
         @convertedText
@@ -52,17 +55,13 @@ else
     // https://www.uphe.com/movies/serenity
     // David Krumholtz on IMDB: https://www.imdb.com/name/nm0472710/
 
+    // The quote array from https://docs.microsoft.com/en-us/aspnet/core/blazor/call-javascript-from-dotnet?view=aspnetcore-5.0
+    #region "Example from docs"
     private MarkupString convertedText =
         new MarkupString("Select the <b>Convert Array</b> button.");
-    private MarkupString embededText =
-        new MarkupString("viz goes here");
-
-    private Vega_LiteBlazor.Data.VegaData[] vegaData;
-
-    
 
     private uint[] quoteArray = new uint[]
-    {
+{
             60, 101, 109, 62, 67, 97, 110, 39, 116, 32, 115, 116, 111, 112, 32,
             116, 104, 101, 32, 115, 105, 103, 110, 97, 108, 44, 32, 77, 97,
             108, 46, 60, 47, 101, 109, 62, 32, 45, 32, 77, 114, 46, 32, 85, 110,
@@ -76,16 +75,35 @@ else
 
         convertedText = new MarkupString(text);
     }
+    #endregion
+
+    #region "Vega-Lite demonstration"
+    private MarkupString embededText =
+        new MarkupString("viz goes here");
+
+    // Create the local array for the vegaData
+    private Vega_LiteBlazor.Data.VegaData[] vegaData;
+
+
+    // Embed the visualization into the web page
     private async Task EmbedViz()
     {
-        var text = await JS.InvokeAsync<string>("displayvega", Newtonsoft.Json.JsonConvert.SerializeObject( vegaData));
+        // Convert the vegaData array into json and call displayvega with InvokeAsync
+        var text = await JS.InvokeAsync<string>("displayvega", Newtonsoft.Json.JsonConvert.SerializeObject(vegaData));
+
+        // Embed the spec into the page
         embededText = new MarkupString(text);
     }
+
+    // Get the vegaData from the server
     protected override async Task OnInitializedAsync()
     {
+        // Create the service
         var vg = new Vega_LiteBlazor.Data.VegaDataService();
+
+        // Get the data array
         vegaData = await vg.GetVegaData();
-        
     }
+    #endregion
 }
 

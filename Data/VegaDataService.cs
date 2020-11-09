@@ -1,27 +1,26 @@
-﻿using System;
+﻿/*
+ * Data Service for the Vega-Lite chart embedded in the razor page
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Vega_LiteBlazor.Data
 {
     public class VegaDataService
     {
+        /// <summary>
+        /// Gets Data for the chart
+        /// </summary>
+        /// <returns>An array of data coordinates</returns>
         public async Task<VegaData[]> GetVegaData()
         {
-            //return Task.FromResult(Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            //{
-            //    Date = startDate.AddDays(index),
-            //    TemperatureC = rng.Next(-20, 55),
-            //    Summary = Summaries[rng.Next(Summaries.Length)]
-            //}).ToArray());
-
             List<VegaData> list = new List<VegaData>();
 
+            // use Task.Run so we can get an await in the async function
             var t = await Task.Run<List<VegaData>>(() =>
             {
-
                 list.Add(new VegaData() { a = 'A', b = 2 });
                 list.Add(new VegaData() { a = 'B', b = 17 });
                 list.Add(new VegaData() { a = 'C', b = 4 });
@@ -33,7 +32,7 @@ namespace Vega_LiteBlazor.Data
                 list.Add(new VegaData() { a = 'I', b = 7 });
                 return list;
             });
-            await Task.Yield();
+            //await Task.Yield();
             return list.ToArray();
 
         }
