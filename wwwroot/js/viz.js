@@ -7,14 +7,16 @@ window.displayvega = (json) => {
     // Assign the specification to a local variable vlSpec.
     var vlSpec = {
         $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+        title: 'test',
         data: {
+            name: 'mydata',
             values: [
-                { "a": "A", "b": 28 }, { "a": "B", "b": 55 }, { "a": "C", "b": 43 },
-                { "a": "D", "b": 91 }, { "a": "E", "b": 81 }, { "a": "F", "b": 53 },
-                { "a": "G", "b": 19 }, { "a": "H", "b": 87 }, { "a": "I", "b": 52 }
+                //{ "a": "A", "b": 28 }, { "a": "B", "b": 55 }, { "a": "C", "b": 43 },
+                //{ "a": "D", "b": 91 }, { "a": "E", "b": 81 }, { "a": "F", "b": 53 },
+                //{ "a": "G", "b": 19 }, { "a": "H", "b": 87 }, { "a": "I", "b": 52 }
             ]
         },
-        mark: 'bar',
+        mark: 'line',
         encoding: {
             x: { field: 'a', type: 'nominal' },
             y: {                
@@ -31,11 +33,29 @@ window.displayvega = (json) => {
     var obj = JSON.parse(json);
 
     // assign the object to values.
-    vlSpec.data.values = obj;
-
+    
+    for (i = 0; i < obj.length; i++) {
+        vlSpec.data.values.push(obj[i]);
+    }
+    //vlSpec.data.values = obj;
+    //var Id = 'vis';
+    //var element = (Id) => {
+    //    setTimeout(internalFocus, 10, Id);
+    //};
+    //var element = document.getElementById(Id);
     // Embed the visualization in the container with id `vis`
-    vegaEmbed('#vis', vlSpec).then(function (result) {
+    vegaEmbed('#vis', vlSpec)
+        .then(function (result) {
         // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view        
-    }).catch(console.error);    
+    })
+        .catch(console.error); 
+    
 }
 
+function internalFocus(Id) {
+    var element = document.getElementById(Id);
+    if (element == null) {
+        setTimeout(internalFocus, 10, Id);
+        return;
+    }
+}

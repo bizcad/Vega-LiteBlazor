@@ -5,6 +5,8 @@
 
 
 <h1>Template for Embedding Vega-Lite Visualization</h1>
+<!-- Container for the visualization -->
+<div id="vis">@embededText</div>
 
 <div>
     <button type="button" class="btn btn-primary" @onclick="ConvertArray">
@@ -17,7 +19,7 @@
 
 @if (vegaData == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Loading vegaData...</em></p>
 }
 else
 {
@@ -40,8 +42,6 @@ else
         </tbody>
     </table>
 }
-<!-- Container for the visualization -->
-<div id="vis">@embededText</div>
 
 <p class="mt-2" style="font-size:1.6em">
     <span class="badge badge-success">
@@ -59,6 +59,8 @@ else
     #region "Example from docs"
     private MarkupString convertedText =
         new MarkupString("Select the <b>Convert Array</b> button.");
+
+    Vega_LiteBlazor.Data.VegaDataService vg = new Vega_LiteBlazor.Data.VegaDataService();
 
     private uint[] quoteArray = new uint[]
 {
@@ -88,22 +90,29 @@ else
     // Embed the visualization into the web page
     private async Task EmbedViz()
     {
+        DateTime startDate = DateTime.Now;
+        startDate -= new TimeSpan(10, 0, 0, 0);
+        Vega_LiteBlazor.Data.VegaDataService v = vg;
+        vegaData = await v.GetVegaDataAsync(startDate);
+
         // Convert the vegaData array into json and call displayvega with InvokeAsync
-        var text = await JS.InvokeAsync<string>("displayvega", Newtonsoft.Json.JsonConvert.SerializeObject(vegaData));
+        var data = Newtonsoft.Json.JsonConvert.SerializeObject(vegaData);
+        //embededText = new MarkupString(data);
+        await JS.InvokeVoidAsync("displayvega", data);
 
         // Embed the spec into the page
-        embededText = new MarkupString(text);
+        //embededText = new MarkupString(text);
     }
 
     // Get the vegaData from the server
-    protected override async Task OnInitializedAsync()
-    {
-        // Create the service
-        var vg = new Vega_LiteBlazor.Data.VegaDataService();
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    // Create the service
 
-        // Get the data array
-        vegaData = await vg.GetVegaData();
-    }
+
+    //    // Get the data array
+    //    //vegaData = await vg.GetVegaData();
+    //}
     #endregion
 }
 
